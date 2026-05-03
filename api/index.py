@@ -11,9 +11,12 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 # Database Configuration (SQLAlchemy)
 # -------------------------------------------------------------------
 # On Vercel, the filesystem is read-only except for /tmp.
-# For production persistence, set the DATABASE_URL environment variable 
-# to a Postgres/MySQL database (e.g., Vercel Postgres).
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:////tmp/spa.db")
+if os.path.exists('/tmp'):
+    default_db_url = "sqlite:////tmp/spa.db"
+else:
+    default_db_url = "sqlite:///spa.db"
+
+DATABASE_URL = os.getenv("DATABASE_URL", default_db_url)
 
 engine = create_engine(
     DATABASE_URL, 
