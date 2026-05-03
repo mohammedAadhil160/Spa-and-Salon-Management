@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LuxeSpa Saloon – Premium unisex spa and salon services. Book haircuts, massages, facials, and more with unparalleled style." />
+  <title>LuxeSpa Saloon | Premium Unisex Spa & Salon</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div id="splash-screen">
+  <div class="splash-logo">Luxe<span>Spa</span></div>
+  <div class="splash-bar"><div class="splash-progress"></div></div>
+</div>
+
+<!-- Cursor Glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ===== NAV ===== -->
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">✂️</div>
+    Luxe<span>Spa</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" class="active" id="nav-home">Home</a></li>
+    <li><a href="recommendation.html" id="nav-rec">Recommendations</a></li>
+    <li><a href="booking.html" id="nav-book">Book Now</a></li>
+    <li><a href="login.html" id="nav-login">Login</a></li>
+  </ul>
+  <a href="booking.html" class="btn btn-gold" id="hero-book-btn" style="margin-left:24px;">Reserve a Slot</a>
+  <div class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-overlay"></div>
+  <div class="particles-container" id="particlesContainer"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span>Mumbai's Premier Unisex Spa & Salon</div>
+    <h1 class="hero-title">
+      Where Beauty<br>Meets
+      <span class="gradient-text"> Luxury</span>
+    </h1>
+    <p class="hero-subtitle">
+      Experience world-class hair care, rejuvenating spa therapies, and exclusive treatments — all in one stunning destination.
+    </p>
+    <div class="hero-cta">
+      <a href="booking.html" class="btn btn-gold" id="cta-book">✨ Book Your Visit</a>
+      <a href="#services" class="btn btn-ghost" id="cta-explore">Explore Services ↓</a>
+    </div>
+  </div>
+
+  <!-- 3D Canvas -->
+  <div style="position:absolute;bottom:0;left:0;right:0;height:200px;pointer-events:none;"></div>
+</section>
+
+<!-- ===== MARQUEE ===== -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item"><span>✂️</span> Premium Haircut</div>
+    <div class="marquee-item"><span>💆</span> Deep Tissue Massage</div>
+    <div class="marquee-item"><span>💅</span> Nail Art & Extensions</div>
+    <div class="marquee-item"><span>🧖</span> Keratin Treatment</div>
+    <div class="marquee-item"><span>🌿</span> Aromatherapy</div>
+    <div class="marquee-item"><span>✨</span> Skin Brightening Facial</div>
+    <div class="marquee-item"><span>💆</span> Scalp Therapy</div>
+    <div class="marquee-item"><span>🧴</span> Anti-Aging Treatment</div>
+    <div class="marquee-item"><span>✂️</span> Premium Haircut</div>
+    <div class="marquee-item"><span>💆</span> Deep Tissue Massage</div>
+    <div class="marquee-item"><span>💅</span> Nail Art & Extensions</div>
+    <div class="marquee-item"><span>🧖</span> Keratin Treatment</div>
+    <div class="marquee-item"><span>🌿</span> Aromatherapy</div>
+    <div class="marquee-item"><span>✨</span> Skin Brightening Facial</div>
+    <div class="marquee-item"><span>💆</span> Scalp Therapy</div>
+    <div class="marquee-item"><span>🧴</span> Anti-Aging Treatment</div>
+  </div>
+</div>
+
+<!-- ===== 3D SCENE ===== -->
+<section style="padding:60px 0; background: var(--dark-2);">
+  <div class="three-scene-wrapper" id="threeSceneWrapper">
+    <canvas id="salonCanvas"></canvas>
+    <div class="three-caption">🖱️ Hover to interact with the scene • Drag to orbit</div>
+  </div>
+  <div style="text-align:center; padding: 30px 5%;">
+    <div class="section-badge">✨ &nbsp; Welcome to LuxeSpa</div>
+    <h2 class="section-title">A New Era of <span style="color:var(--gold);">Self Care</span></h2>
+    <div class="gold-divider"><span class="scissors">✂️</span></div>
+    <p style="max-width:600px;margin:0 auto;color:var(--text-muted);line-height:1.9;font-size:1.05rem;">
+      Step into a sanctuary where every visit is a journey. Our expert stylists and therapists are dedicated to crafting a personalised experience that revitalises your mind, body and confidence.
+    </p>
+  </div>
+</section>
+
+<!-- ===== SERVICES ===== -->
+<section id="services" style="padding:100px 5%;">
+  <div class="section-badge">Our Services</div>
+  <h2 class="section-title reveal">Treatments Built for <span style="color:var(--gold);">You</span></h2>
+  <div class="gold-divider"><span class="scissors">✂️</span></div>
+  <div class="cards-grid" id="servicesGrid">
+    <!-- Loaded dynamically -->
+    <div class="card reveal">
+      <div class="card-icon">✂️</div>
+      <h4>Premium Haircut</h4>
+      <div class="card-price">$45</div>
+      <p style="font-size:0.875rem;line-height:1.7;">Personalised cuts by expert stylists tailored to your face shape and hair texture.</p>
+      <span class="card-badge-popular" style="margin-top:12px;display:inline-block;">🔥 Popular</span>
+    </div>
+    <div class="card reveal" style="transition-delay:0.1s">
+      <div class="card-icon">💆</div>
+      <h4>Deep Tissue Massage</h4>
+      <div class="card-price">$80</div>
+      <p style="font-size:0.875rem;line-height:1.7;">Relieve deep muscle tension with our therapeutic massage performed by certified therapists.</p>
+      <span class="card-badge-popular" style="margin-top:12px;display:inline-block;">🔥 Popular</span>
+    </div>
+    <div class="card reveal" style="transition-delay:0.2s">
+      <div class="card-icon">🧖</div>
+      <h4>Keratin Treatment</h4>
+      <div class="card-price">$120</div>
+      <p style="font-size:0.875rem;line-height:1.7;">Transform frizzy hair into silky, smooth perfection that lasts for months.</p>
+    </div>
+    <div class="card reveal" style="transition-delay:0.3s">
+      <div class="card-icon">✨</div>
+      <h4>Aromatherapy Facial</h4>
+      <div class="card-price">$60</div>
+      <p style="font-size:0.875rem;line-height:1.7;">Revitalise your skin with our signature aromatic facial using organic botanical extracts.</p>
+      <span class="card-badge-popular" style="margin-top:12px;display:inline-block;">🔥 Popular</span>
+    </div>
+    <div class="card reveal" style="transition-delay:0.4s">
+      <div class="card-icon">💅</div>
+      <h4>Nail Art Studio</h4>
+      <div class="card-price">$35</div>
+      <p style="font-size:0.875rem;line-height:1.7;">Express yourself with our creative nail art studio — gel, acrylic, and artistic designs.</p>
+    </div>
+    <div class="card reveal" style="transition-delay:0.5s">
+      <div class="card-icon">🌿</div>
+      <h4>Scalp Therapy</h4>
+      <div class="card-price">$55</div>
+      <p style="font-size:0.875rem;line-height:1.7;">Nourish your scalp and stimulate hair growth with our advanced botanical scalp treatment.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OFFERS ===== -->
+<section style="padding:80px 5%; background:var(--dark-2);">
+  <div class="section-badge">Exclusive Deals</div>
+  <h2 class="section-title reveal">Hot Offers & <span style="color:var(--gold);">Discounts</span></h2>
+  <div class="gold-divider"><span class="scissors">✂️</span></div>
+  <div class="offers-grid">
+    <div class="offer-card reveal">
+      <div class="offer-discount">20%</div>
+      <div class="offer-title">Summer Glow Up</div>
+      <p style="margin:8px 0 24px;font-size:0.9rem;">Get 20% off on all basic haircuts plus a complimentary wash and blow-dry. Summer ready from head to toe!</p>
+      <a href="booking.html" class="btn btn-gold" id="offer1-book">Book This Offer</a>
+    </div>
+    <div class="offer-card reveal" style="transition-delay:0.1s">
+      <div class="offer-discount">30%</div>
+      <div class="offer-title">Couples Spa Day</div>
+      <p style="margin:8px 0 24px;font-size:0.9rem;">Bring a partner and enjoy 30% off any premium massage or duo facial. The perfect treat for two.</p>
+      <a href="booking.html" class="btn btn-gold" id="offer2-book">Book This Offer</a>
+    </div>
+    <div class="offer-card reveal" style="transition-delay:0.2s">
+      <div class="offer-discount">15%</div>
+      <div class="offer-title">First Timer Deal</div>
+      <p style="margin:8px 0 24px;font-size:0.9rem;">First time with us? Enjoy 15% off your entire first visit. Welcome to the family!</p>
+      <a href="booking.html" class="btn btn-gold" id="offer3-book">Book This Offer</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PARALLAX STATS ===== -->
+<section class="parallax-section" id="stats">
+  <div class="parallax-bg" style="background-image:url('assets/hero-bg.jpg');"></div>
+  <div class="parallax-content" style="text-align:center;">
+    <div class="section-badge">Our Numbers</div>
+    <h2 class="section-title reveal" style="margin-bottom:60px;">Trusted by <span style="color:var(--gold);">Thousands</span></h2>
+    <div class="stats-grid">
+      <div class="reveal">
+        <div class="stat-value" data-target="12000">0</div>
+        <div class="stat-label">Happy Clients</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.1s">
+        <div class="stat-value" data-target="8">0</div>
+        <div class="stat-label">Years of Expertise</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.2s">
+        <div class="stat-value" data-target="24">0</div>
+        <div class="stat-label">Expert Stylists</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.3s">
+        <div class="stat-value" data-target="98">0</div>
+        <div class="stat-label">% Satisfaction Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SPECIAL SERVICES ===== -->
+<section style="padding:100px 5%;">
+  <div class="section-badge">Signature</div>
+  <h2 class="section-title reveal">Our <span style="color:var(--gold);">Special Services</span></h2>
+  <div class="gold-divider"><span class="scissors">✂️</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;margin-top:20px;" class="special-grid">
+    <div class="reveal">
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="card" style="display:flex;align-items:center;gap:20px;padding:24px;">
+          <div class="card-icon" style="margin:0;flex-shrink:0;">🔮</div>
+          <div>
+            <h4>AI Hair Analysis</h4>
+            <p style="font-size:0.875rem;margin-top:4px;">Our smart scanner analyses your hair condition and recommends the perfect treatment plan instantly.</p>
+          </div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:20px;padding:24px;transition-delay:0.1s;">
+          <div class="card-icon" style="margin:0;flex-shrink:0;">🧬</div>
+          <div>
+            <h4>Custom Blend Therapy</h4>
+            <p style="font-size:0.875rem;margin-top:4px;">Formulas mixed on-site, tailored to your unique skin and hair biology using lab-grade ingredients.</p>
+          </div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:20px;padding:24px;transition-delay:0.2s;">
+          <div class="card-icon" style="margin:0;flex-shrink:0;">💎</div>
+          <div>
+            <h4>VIP Diamond Package</h4>
+            <p style="font-size:0.875rem;margin-top:4px;">An exclusive all-day package: haircut, full body spa, facial, mani-pedi, and gourmet refreshments.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.3s;background:var(--dark-card);border:1px solid var(--glass-border);border-radius:24px;padding:40px;text-align:center;">
+      <div style="font-size:5rem;margin-bottom:24px;">🌸</div>
+      <h3 style="color:var(--gold);">Unisex Sanctuary</h3>
+      <p style="margin-top:12px;line-height:1.9;">At LuxeSpa, we celebrate all forms of beauty. Our space is a judgement-free zone where everyone is welcomed with warmth, elegance, and expert care.</p>
+      <a href="recommendation.html" class="btn btn-gold" style="margin-top:28px;" id="special-rec-btn">Get My Recommendation</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section style="padding:80px 5%; background:var(--dark-2);">
+  <div class="section-badge">Reviews</div>
+  <h2 class="section-title reveal">What Clients <span style="color:var(--gold);">Say</span></h2>
+  <div class="gold-divider"><span class="scissors">✂️</span></div>
+  <div class="testimonials-grid" style="margin-top:20px;">
+    <div class="testimonial-card reveal">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"The best haircut I've ever had! The stylists are so skilled and the ambience is absolutely stunning. I leave feeling like a new person every time."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">👩</div>
+        <div><div class="author-name">Priya Sharma</div><div class="author-type">Regular Client</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal" style="transition-delay:0.1s">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"The deep tissue massage completely relieved my back pain. Worth every rupee. The couple's spa day offer was an amazing experience for me and my partner."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">👨</div>
+        <div><div class="author-name">Rahul Verma</div><div class="author-type">Monthly Member</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal" style="transition-delay:0.2s">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">"The AI hair analysis tool blew my mind. It accurately identified my hair issues and their keratin treatment transformed my frizzy hair completely!"</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">👩</div>
+        <div><div class="author-name">Ananya Patel</div><div class="author-type">New Client</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="nav-logo" style="font-size:1.4rem;">
+        <div class="logo-icon">✂️</div>
+        Luxe<span>Spa</span>
+      </a>
+      <p>Mumbai's most loved unisex spa and salon, where every service is crafted to perfection, and every client leaves glowing.</p>
+      <div class="footer-socials">
+        <div class="footer-social">📸</div>
+        <div class="footer-social">🐦</div>
+        <div class="footer-social">📘</div>
+        <div class="footer-social">▶️</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Services</h5>
+      <ul>
+        <li><a href="#">Hair Styling</a></li>
+        <li><a href="#">Spa & Massage</a></li>
+        <li><a href="#">Skin Treatments</a></li>
+        <li><a href="#">Nail Studio</a></li>
+        <li><a href="#">Scalp Therapy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Team</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="#">📍 Bandra West, Mumbai</a></li>
+        <li><a href="#">📞 +91 98765 43210</a></li>
+        <li><a href="#">📧 hello@luxespa.in</a></li>
+        <li><a href="#">⏰ Mon–Sun: 9am – 9pm</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 LuxeSpa Saloon. All rights reserved.</p>
+    <p>Privacy Policy · Terms of Service</p>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

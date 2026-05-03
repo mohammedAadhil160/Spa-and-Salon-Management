@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Get personalized spa and salon service recommendations at LuxeSpa – tailored to your hair type, skin, and preferences." />
+  <title>Recommendations | LuxeSpa Saloon</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<div id="splash-screen">
+  <div class="splash-logo">Luxe<span>Spa</span></div>
+  <div class="splash-bar"><div class="splash-progress"></div></div>
+</div>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="particles-container" id="particlesContainer"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">✂️</div>
+    Luxe<span>Spa</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" id="nav-home">Home</a></li>
+    <li><a href="recommendation.html" class="active" id="nav-rec">Recommendations</a></li>
+    <li><a href="booking.html" id="nav-book">Book Now</a></li>
+    <li><a href="login.html" id="nav-login">Login</a></li>
+  </ul>
+  <a href="booking.html" class="btn btn-gold" style="margin-left:24px;" id="nav-book-cta">Reserve a Slot</a>
+</nav>
+
+<!-- HERO PARALLAX BANNER -->
+<section class="parallax-section" style="min-height:340px;display:flex;align-items:center;padding-top:calc(var(--nav-height) + 60px);">
+  <div class="parallax-bg" style="background:linear-gradient(135deg,#0d0d15,#1a0f0a);"></div>
+  <div class="parallax-content" style="width:100%;text-align:center;">
+    <div class="hero-badge" style="display:inline-flex;"><span class="dot"></span>AI-Powered Recommendations</div>
+    <h1 class="hero-title" style="font-size:clamp(2rem,5vw,3.5rem);">
+      Discover Your <span class="gradient-text">Perfect Treatment</span>
+    </h1>
+    <div class="gold-divider" style="justify-content:center;"><span class="scissors">✂️</span></div>
+    <p style="color:var(--text-muted);max-width:560px;margin:0 auto;line-height:1.9;">
+      Answer a few quick questions and our system will curate the ideal services for your unique hair type, skin concern, and lifestyle.
+    </p>
+  </div>
+</section>
+
+<!-- 3D FLOATING ELEMENTS BANNER -->
+<div style="height:200px;background:var(--dark-2);position:relative;overflow:hidden;">
+  <canvas id="recCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:40px;pointer-events:none;">
+    <div class="floating-icon-3d" style="animation:float3d 3s ease-in-out infinite;">✂️</div>
+    <div class="floating-icon-3d" style="animation:float3d 3s ease-in-out 0.5s infinite;">💆</div>
+    <div class="floating-icon-3d" style="animation:float3d 3s ease-in-out 1s infinite;">🌿</div>
+    <div class="floating-icon-3d" style="animation:float3d 3s ease-in-out 1.5s infinite;">✨</div>
+    <div class="floating-icon-3d" style="animation:float3d 3s ease-in-out 2s infinite;">💎</div>
+  </div>
+</div>
+
+<style>
+.floating-icon-3d {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 20px rgba(201,169,110,0.5));
+  transition: transform 0.3s;
+}
+@keyframes float3d {
+  0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+  50% { transform: translateY(-18px) scale(1.08) rotate(5deg); }
+}
+.rec-result-card {
+  background: var(--dark-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius);
+  padding: 28px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.rec-result-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--gradient-gold);
+}
+.rec-result-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--gold);
+  box-shadow: var(--shadow-gold);
+}
+.match-bar { height: 6px; background: var(--dark-3); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.match-fill { height: 100%; background: var(--gradient-gold); border-radius: 3px; transition: width 1s ease; }
+.quiz-nav-btn { display: flex; gap: 12px; margin-top: 32px; }
+</style>
+
+<!-- ===== QUIZ SECTION ===== -->
+<section style="padding:80px 5%;">
+  <div style="max-width:800px;margin:0 auto;">
+
+    <!-- Quiz Container -->
+    <div class="quiz-container reveal" id="quizContainer">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:0.85rem;color:var(--text-muted);">Step <span id="stepNum">1</span> of 5</div>
+        <div style="font-size:0.85rem;color:var(--gold);">✨ <span id="stepLabel">Getting Started</span></div>
+      </div>
+      <div class="quiz-steps" id="quizSteps">
+        <div class="quiz-step active" id="qs0"></div>
+        <div class="quiz-step" id="qs1"></div>
+        <div class="quiz-step" id="qs2"></div>
+        <div class="quiz-step" id="qs3"></div>
+        <div class="quiz-step" id="qs4"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="quiz-step-content" id="step-1">
+        <h3 style="margin-bottom:8px;">What's your primary goal today?</h3>
+        <p style="font-size:0.9rem;">Choose the experience you're looking for.</p>
+        <div class="quiz-options" style="margin-top:24px;">
+          <div class="quiz-option" onclick="selectOption(this,'goal','hair')">✂️ Hair Transformation</div>
+          <div class="quiz-option" onclick="selectOption(this,'goal','relax')">💆 Deep Relaxation</div>
+          <div class="quiz-option" onclick="selectOption(this,'goal','skin')">✨ Skin Refresh</div>
+          <div class="quiz-option" onclick="selectOption(this,'goal','full')">💎 Full Luxury Experience</div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="quiz-step-content" id="step-2" style="display:none;">
+        <h3 style="margin-bottom:8px;">Describe your hair type</h3>
+        <p style="font-size:0.9rem;">This helps us pick the most effective hair treatments.</p>
+        <div class="quiz-options" style="margin-top:24px;">
+          <div class="quiz-option" onclick="selectOption(this,'hair','straight')">🌊 Straight</div>
+          <div class="quiz-option" onclick="selectOption(this,'hair','wavy')">〰️ Wavy</div>
+          <div class="quiz-option" onclick="selectOption(this,'hair','curly')">🌀 Curly</div>
+          <div class="quiz-option" onclick="selectOption(this,'hair','coily')">🔁 Coily / Kinky</div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="quiz-step-content" id="step-3" style="display:none;">
+        <h3 style="margin-bottom:8px;">How is your scalp condition?</h3>
+        <p style="font-size:0.9rem;">We'll recommend the perfect scalp care routine.</p>
+        <div class="quiz-options" style="margin-top:24px;">
+          <div class="quiz-option" onclick="selectOption(this,'scalp','oily')">💧 Very Oily</div>
+          <div class="quiz-option" onclick="selectOption(this,'scalp','dry')">🏜️ Dry & Flaky</div>
+          <div class="quiz-option" onclick="selectOption(this,'scalp','normal')">✅ Balanced / Normal</div>
+          <div class="quiz-option" onclick="selectOption(this,'scalp','sensitive')">🌡️ Sensitive</div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="quiz-step-content" id="step-4" style="display:none;">
+        <h3 style="margin-bottom:8px;">What is your body stress level?</h3>
+        <p style="font-size:0.9rem;">Helps us identify the right massage and spa intensity.</p>
+        <div class="quiz-options" style="margin-top:24px;">
+          <div class="quiz-option" onclick="selectOption(this,'stress','low')">😌 Low – Just relaxing</div>
+          <div class="quiz-option" onclick="selectOption(this,'stress','moderate')">😐 Moderate – Some tension</div>
+          <div class="quiz-option" onclick="selectOption(this,'stress','high')">😣 High – Lots of muscle pain</div>
+          <div class="quiz-option" onclick="selectOption(this,'stress','exhausted')">😴 Exhausted – Need full reset</div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="quiz-step-content" id="step-5" style="display:none;">
+        <h3 style="margin-bottom:8px;">What's your budget for this visit?</h3>
+        <p style="font-size:0.9rem;">We'll match services that fit within your preference.</p>
+        <div class="quiz-options" style="margin-top:24px;">
+          <div class="quiz-option" onclick="selectOption(this,'budget','budget')">💚 Budget-Friendly (Under $60)</div>
+          <div class="quiz-option" onclick="selectOption(this,'budget','mid')">💛 Mid-Range ($60–$120)</div>
+          <div class="quiz-option" onclick="selectOption(this,'budget','premium')">🥇 Premium ($120–$200)</div>
+          <div class="quiz-option" onclick="selectOption(this,'budget','luxury')">💎 No Limit — Give me the best</div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="quiz-nav-btn">
+        <button class="btn btn-ghost" id="prevBtn" onclick="quizNav(-1)" style="display:none;">← Back</button>
+        <button class="btn btn-gold" id="nextBtn" onclick="quizNav(1)" disabled style="margin-left:auto;">Next Step →</button>
+      </div>
+    </div>
+
+    <!-- Results Container (hidden initially) -->
+    <div id="resultsContainer" style="display:none;">
+      <div style="text-align:center;margin-bottom:48px;">
+        <div style="font-size:4rem;margin-bottom:16px;" id="resultsEmoji">✨</div>
+        <h2 class="section-title">Your Personalised <span style="color:var(--gold);">Treatment Plan</span></h2>
+        <div class="gold-divider" style="justify-content:center;"><span class="scissors">✂️</span></div>
+        <p id="resultsIntro" style="color:var(--text-muted);max-width:500px;margin:0 auto;line-height:1.9;"></p>
+      </div>
+
+      <div class="cards-grid" id="resultsGrid" style="margin-bottom:40px;"></div>
+
+      <div style="text-align:center;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <a href="booking.html" class="btn btn-gold" id="bookRecommendedBtn">📅 Book These Services</a>
+        <button class="btn btn-ghost" onclick="retakeQuiz()" id="retakeBtn">🔄 Retake Quiz</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== ALL SERVICES SECTION ===== -->
+<section style="padding:80px 5%; background:var(--dark-2);">
+  <div class="section-badge">Browse All</div>
+  <h2 class="section-title reveal">All Available <span style="color:var(--gold);">Services</span></h2>
+  <div class="gold-divider"><span class="scissors">✂️</span></div>
+  <div class="cards-grid" id="allServicesGrid" style="margin-top:20px;">
+    <!-- Populated dynamically -->
+  </div>
+</section>
+
+<!-- ===== OFFERS SECTION ===== -->
+<section style="padding:80px 5%;">
+  <div class="section-badge">Exclusive Deals</div>
+  <h2 class="section-title reveal">Current <span style="color:var(--gold);">Offers</span></h2>
+  <div class="gold-divider"><span class="scissors">✂️</span></div>
+  <div class="offers-grid" style="margin-top:20px;" id="offersGrid">
+    <!-- Populated dynamically -->
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-bottom" style="border-top:none;padding-top:0;">
+    <p>© 2025 LuxeSpa Saloon. All rights reserved.</p>
+    <div style="display:flex;gap:24px;">
+      <a href="index.html" style="color:var(--text-muted);font-size:0.8rem;">Home</a>
+      <a href="booking.html" style="color:var(--text-muted);font-size:0.8rem;">Book Now</a>
+      <a href="login.html" style="color:var(--text-muted);font-size:0.8rem;">Login</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+// ===== QUIZ LOGIC =====
+let currentStep = 1;
+const totalSteps = 5;
+const answers = {};
+
+const stepLabels = ['Getting Started', 'Hair Type', 'Scalp Condition', 'Stress Level', 'Budget'];
+
+function selectOption(el, key, value) {
+  const siblings = el.parentElement.querySelectorAll('.quiz-option');
+  siblings.forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[key] = value;
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function quizNav(dir) {
+  const stepEl = document.getElementById(`step-${currentStep}`);
+  stepEl.style.display = 'none';
+  document.getElementById(`qs${currentStep - 1}`).classList.remove('active');
+  document.getElementById(`qs${currentStep - 1}`).classList.add('done');
+
+  currentStep += dir;
+  if (currentStep < 1) currentStep = 1;
+
+  if (currentStep > totalSteps) {
+    showResults();
+    return;
+  }
+
+  document.getElementById(`step-${currentStep}`).style.display = 'block';
+  document.getElementById(`qs${currentStep - 1}`).classList.add('active');
+
+  document.getElementById('stepNum').textContent = currentStep;
+  document.getElementById('stepLabel').textContent = stepLabels[currentStep - 1];
+
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
+
+  // Check if this step already has an answer
+  const stepKeys = ['goal','hair','scalp','stress','budget'];
+  nextBtn.disabled = !answers[stepKeys[currentStep - 1]];
+  nextBtn.textContent = currentStep === totalSteps ? 'See My Results ✨' : 'Next Step →';
+
+  // Restore selected option if revisiting
+  const stepKeys2 = ['goal','hair','scalp','stress','budget'];
+  const key = stepKeys2[currentStep - 1];
+  if (answers[key]) {
+    const opts = document.querySelectorAll(`#step-${currentStep} .quiz-option`);
+    opts.forEach(o => {
+      if (o.getAttribute('onclick')?.includes(`'${answers[key]}'`)) o.classList.add('selected');
+    });
+  }
+}
+
+function showResults() {
+  document.getElementById('quizContainer').style.display = 'none';
+  const resultsEl = document.getElementById('resultsContainer');
+  resultsEl.style.display = 'block';
+
+  // Build results based on answers
+  const recs = buildRecommendations();
+  const grid = document.getElementById('resultsGrid');
+  grid.innerHTML = '';
+
+  document.getElementById('resultsIntro').textContent = 
+    `Based on your ${answers.goal || 'preferences'} profile, we've crafted the perfect treatment plan just for you.`;
+
+  recs.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'rec-result-card';
+    card.style.animationDelay = `${i * 0.1}s`;
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+        <div class="card-icon" style="margin:0;">${r.icon}</div>
+        <span style="font-size:0.8rem;color:var(--gold);font-weight:600;">${r.match}% Match</span>
+      </div>
+      <h4 style="margin-bottom:6px;">${r.name}</h4>
+      <p style="font-size:0.85rem;line-height:1.7;margin-bottom:12px;">${r.reason}</p>
+      <div class="match-bar"><div class="match-fill" style="width:0%" data-width="${r.match}%"></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+        <span style="color:var(--gold);font-weight:700;">${r.price}</span>
+        <a href="booking.html?service=${encodeURIComponent(r.name)}" class="btn btn-outline" style="padding:8px 16px;font-size:0.8rem;">Book Now</a>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Animate match bars
+  setTimeout(() => {
+    document.querySelectorAll('.match-fill').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+  }, 400);
+}
+
+function buildRecommendations() {
+  const all = [
+    { icon:'✂️', name:'Premium Haircut', price:'$45', match:98, reason:'Expertly tailored to your hair type and lifestyle.', tags:['hair','straight','wavy','curly','coily','budget','mid'] },
+    { icon:'💆', name:'Deep Tissue Massage', price:'$80', match:96, reason:'Deeply relieves tension and stress knots throughout the body.', tags:['relax','high','exhausted','moderate','mid','premium'] },
+    { icon:'🧖', name:'Keratin Treatment', price:'$120', match:92, reason:'Transforms frizzy and coily hair into silky smooth perfection.', tags:['hair','curly','coily','premium','luxury'] },
+    { icon:'✨', name:'Aromatherapy Facial', price:'$60', match:90, reason:'Revitalises and brightens skin using pure botanical oils.', tags:['skin','full','moderate','budget','mid'] },
+    { icon:'🌿', name:'Scalp Therapy', price:'$55', match:88, reason:'Nourishes and rebalances the scalp to promote healthy hair growth.', tags:['hair','dry','oily','sensitive','budget'] },
+    { icon:'💎', name:'VIP Diamond Package', price:'$199', match:95, reason:'The ultimate all-day pampering experience with every top service included.', tags:['full','luxury','low','premium'] },
+  ];
+  const tags = Object.values(answers);
+  let scored = all.map(s => {
+    let score = s.match;
+    let hits = tags.filter(t => s.tags.includes(t)).length;
+    if (hits > 0) score = Math.min(99, score + hits * 2);
+    return { ...s, match: score };
+  });
+  return scored.sort((a,b) => b.match - a.match).slice(0,4);
+}
+
+function retakeQuiz() {
+  currentStep = 1;
+  Object.keys(answers).forEach(k => delete answers[k]);
+  document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.quiz-step').forEach((el,i) => {
+    el.classList.remove('done','active');
+    if (i === 0) el.classList.add('active');
+  });
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById(`step-${i}`);
+    if (el) el.style.display = i === 1 ? 'block' : 'none';
+  }
+  document.getElementById('stepNum').textContent = '1';
+  document.getElementById('stepLabel').textContent = 'Getting Started';
+  document.getElementById('prevBtn').style.display = 'none';
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('nextBtn').textContent = 'Next Step →';
+  document.getElementById('quizContainer').style.display = 'block';
+  document.getElementById('resultsContainer').style.display = 'none';
+}
+
+// Load all services
+fetch('http://localhost:8080/api/services')
+  .then(r => r.json())
+  .then(services => renderAllServices(services))
+  .catch(() => {
+    const fallback = [
+      {id:1,name:'Premium Haircut',price:'$45',type:'Hair',popular:true},
+      {id:2,name:'Deep Tissue Massage',price:'$80',type:'Spa',popular:true},
+      {id:3,name:'Keratin Treatment',price:'$120',type:'Hair',popular:false},
+      {id:4,name:'Aromatherapy Facial',price:'$60',type:'Spa',popular:true},
+      {id:5,name:'Nail Art Studio',price:'$35',type:'Beauty',popular:false},
+      {id:6,name:'Scalp Therapy',price:'$55',type:'Hair',popular:false},
+    ];
+    renderAllServices(fallback);
+  });
+
+const icons = {'Hair':'✂️','Spa':'💆','Beauty':'💅','Skin':'✨'};
+function renderAllServices(services) {
+  const grid = document.getElementById('allServicesGrid');
+  grid.innerHTML = '';
+  services.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'card reveal';
+    card.innerHTML = `
+      <div class="card-icon">${icons[s.type] || '✨'}</div>
+      <h4>${s.name}</h4>
+      <div class="card-price">${s.price}</div>
+      <p style="font-size:0.875rem;">${s.type} treatment by our expert team.</p>
+      ${s.popular ? '<span class="card-badge-popular" style="margin-top:10px;display:inline-block;">🔥 Popular</span>' : ''}
+      <a href="booking.html?service=${encodeURIComponent(s.name)}" class="btn btn-outline" style="margin-top:16px;width:100%;justify-content:center;">Book Now</a>
+    `;
+    grid.appendChild(card);
+  });
+  if (window.observeReveal) window.observeReveal();
+}
+
+// Load offers
+fetch('http://localhost:8080/api/services/offers')
+  .then(r => r.json())
+  .then(offers => renderOffers(offers))
+  .catch(() => {
+    renderOffers([
+      {id:1, title:'Summer Glow Up', description:'Get 20% off on all basic haircuts + free wash.', discount:'20%'},
+      {id:2, title:'Couples Spa Day', description:'Bring a partner and enjoy 30% off any premium massage.', discount:'30%'},
+    ]);
+  });
+
+function renderOffers(offers) {
+  const grid = document.getElementById('offersGrid');
+  grid.innerHTML = '';
+  offers.forEach(o => {
+    const card = document.createElement('div');
+    card.className = 'offer-card reveal';
+    card.innerHTML = `
+      <div class="offer-discount">${o.discount}</div>
+      <div class="offer-title">${o.title}</div>
+      <p style="margin:8px 0 24px;font-size:0.9rem;">${o.description}</p>
+      <a href="booking.html" class="btn btn-gold">Claim This Offer</a>
+    `;
+    grid.appendChild(card);
+  });
+  if (window.observeReveal) window.observeReveal();
+}
+</script>
+</body>
+</html>
