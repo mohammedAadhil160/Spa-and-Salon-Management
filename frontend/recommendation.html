@@ -164,9 +164,9 @@
         <h3 style="margin-bottom:8px;">What's your budget for this visit?</h3>
         <p style="font-size:0.9rem;">We'll match services that fit within your preference.</p>
         <div class="quiz-options" style="margin-top:24px;">
-          <div class="quiz-option" onclick="selectOption(this,'budget','budget')">💚 Budget-Friendly (Under $60)</div>
-          <div class="quiz-option" onclick="selectOption(this,'budget','mid')">💛 Mid-Range ($60–$120)</div>
-          <div class="quiz-option" onclick="selectOption(this,'budget','premium')">🥇 Premium ($120–$200)</div>
+          <div class="quiz-option" onclick="selectOption(this,'budget','budget')">💚 Budget-Friendly (Under ₹5000)</div>
+          <div class="quiz-option" onclick="selectOption(this,'budget','mid')">💛 Mid-Range (₹5000–₹10000)</div>
+          <div class="quiz-option" onclick="selectOption(this,'budget','premium')">🥇 Premium (₹10000–₹16000)</div>
           <div class="quiz-option" onclick="selectOption(this,'budget','luxury')">💎 No Limit — Give me the best</div>
         </div>
       </div>
@@ -330,12 +330,12 @@ function showResults() {
 
 function buildRecommendations() {
   const all = [
-    { icon:'✂️', name:'Premium Haircut', price:'$45', match:98, reason:'Expertly tailored to your hair type and lifestyle.', tags:['hair','straight','wavy','curly','coily','budget','mid'] },
-    { icon:'💆', name:'Deep Tissue Massage', price:'$80', match:96, reason:'Deeply relieves tension and stress knots throughout the body.', tags:['relax','high','exhausted','moderate','mid','premium'] },
-    { icon:'🧖', name:'Keratin Treatment', price:'$120', match:92, reason:'Transforms frizzy and coily hair into silky smooth perfection.', tags:['hair','curly','coily','premium','luxury'] },
-    { icon:'✨', name:'Aromatherapy Facial', price:'$60', match:90, reason:'Revitalises and brightens skin using pure botanical oils.', tags:['skin','full','moderate','budget','mid'] },
-    { icon:'🌿', name:'Scalp Therapy', price:'$55', match:88, reason:'Nourishes and rebalances the scalp to promote healthy hair growth.', tags:['hair','dry','oily','sensitive','budget'] },
-    { icon:'💎', name:'VIP Diamond Package', price:'$199', match:95, reason:'The ultimate all-day pampering experience with every top service included.', tags:['full','luxury','low','premium'] },
+    { icon:'✂️', name:'Premium Haircut', price:'₹3735', match:98, reason:'Expertly tailored to your hair type and lifestyle.', tags:['hair','straight','wavy','curly','coily','budget','mid'] },
+    { icon:'💆', name:'Deep Tissue Massage', price:'₹6640', match:96, reason:'Deeply relieves tension and stress knots throughout the body.', tags:['relax','high','exhausted','moderate','mid','premium'] },
+    { icon:'🧖', name:'Keratin Treatment', price:'₹9960', match:92, reason:'Transforms frizzy and coily hair into silky smooth perfection.', tags:['hair','curly','coily','premium','luxury'] },
+    { icon:'✨', name:'Aromatherapy Facial', price:'₹4980', match:90, reason:'Revitalises and brightens skin using pure botanical oils.', tags:['skin','full','moderate','budget','mid'] },
+    { icon:'🌿', name:'Scalp Therapy', price:'₹4565', match:88, reason:'Nourishes and rebalances the scalp to promote healthy hair growth.', tags:['hair','dry','oily','sensitive','budget'] },
+    { icon:'💎', name:'VIP Diamond Package', price:'₹16517', match:95, reason:'The ultimate all-day pampering experience with every top service included.', tags:['full','luxury','low','premium'] },
   ];
   const tags = Object.values(answers);
   let scored = all.map(s => {
@@ -374,12 +374,12 @@ fetch('http://localhost:8080/api/services')
   .then(services => renderAllServices(services))
   .catch(() => {
     const fallback = [
-      {id:1,name:'Premium Haircut',price:'$45',type:'Hair',popular:true},
-      {id:2,name:'Deep Tissue Massage',price:'$80',type:'Spa',popular:true},
-      {id:3,name:'Keratin Treatment',price:'$120',type:'Hair',popular:false},
-      {id:4,name:'Aromatherapy Facial',price:'$60',type:'Spa',popular:true},
-      {id:5,name:'Nail Art Studio',price:'$35',type:'Beauty',popular:false},
-      {id:6,name:'Scalp Therapy',price:'$55',type:'Hair',popular:false},
+      {id:1,name:'Premium Haircut',price:'₹3735',type:'Hair',popular:true},
+      {id:2,name:'Deep Tissue Massage',price:'₹6640',type:'Spa',popular:true},
+      {id:3,name:'Keratin Treatment',price:'₹9960',type:'Hair',popular:false},
+      {id:4,name:'Aromatherapy Facial',price:'₹4980',type:'Spa',popular:true},
+      {id:5,name:'Nail Art Studio',price:'₹2905',type:'Beauty',popular:false},
+      {id:6,name:'Scalp Therapy',price:'₹4565',type:'Hair',popular:false},
     ];
     renderAllServices(fallback);
   });
